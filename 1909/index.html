@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Viewer</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            color: #fff;
+            font-family: sans-serif;
+            width: 100%;
+            height: 100%;
+        }
+        /* Container wraps the image and allows full natural scrolling when zoomed */
+        #viewer-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 40px;
+            overflow: auto;
+        }
+        img {
+            /* Changed to standard percentages so browser zoom multiplies its scale */
+            width: auto;
+            max-width: 95%;
+            height: auto;
+            display: block;
+            margin: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        /* Buttons remain fixed to the screen edges even when scrolling zoomed images */
+        .nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 20px 15px;
+            cursor: pointer;
+            font-size: 24px;
+            transition: background 0.2s;
+            user-select: none;
+            z-index: 10;
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        #left-btn { left: 20px; }
+        #right-btn { right: 20px; }
+        
+        #page-counter {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #888;
+            font-size: 14px;
+            background: rgba(17,17,17,0.8);
+            padding: 4px 10px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<div id="viewer-container">
+    <img id="slide-display" src="" alt="Slide">
+</div>
+
+<button id="left-btn" class="nav-btn">&#10094;</button>
+<button id="right-btn" class="nav-btn">&#10095;</button>
+
+<div id="page-counter">Slide <span id="current-page">1</span> of <span id="total-pages">0</span></div>
+
+<script>
+    const files = ["little-nemo-19090103-l.jpeg","little-nemo-19090110-l.jpeg","little-nemo-19090117-l.jpeg","little-nemo-19090124-l.jpeg","little-nemo-19090131-l.jpeg","little-nemo-19090207-l.jpeg","little-nemo-19090214-l.jpeg","little-nemo-19090221-l.jpeg","little-nemo-19090228-l.jpeg","little-nemo-19090307-l.jpeg","little-nemo-19090314-l.jpeg","little-nemo-19090321-l.jpeg","little-nemo-19090328-l.jpeg","little-nemo-19090404-l.jpeg","little-nemo-19090411-l.jpeg","little-nemo-19090418-l.jpeg","little-nemo-19090425-l.jpeg","little-nemo-19090502-l.jpeg","little-nemo-19090509-l.jpeg","little-nemo-19090516-l.jpeg","little-nemo-19090523-l.jpeg","little-nemo-19090530-l.jpeg","little-nemo-19090606-l.jpeg","little-nemo-19090613-l.jpeg","little-nemo-19090620-l.jpeg","little-nemo-19090627-l.jpeg","little-nemo-19090704-l.jpeg","little-nemo-19090711-l.jpeg","little-nemo-19090718-l.jpeg","little-nemo-19090725-l.jpeg","little-nemo-19090801-l.jpeg","little-nemo-19090808-l.jpeg","little-nemo-19090815-l.jpeg","little-nemo-19090822-l.jpeg","little-nemo-19090829-l.jpeg","little-nemo-19090905-l.jpeg","little-nemo-19090912-l.jpeg","little-nemo-19090919-l.jpeg","little-nemo-19090926-l.jpeg","little-nemo-19091003-l.jpeg","little-nemo-19091010-l.jpeg","little-nemo-19091017-l.jpeg","little-nemo-19091024-l.jpeg","little-nemo-19091031-l.jpeg","little-nemo-19091107-l.jpeg","little-nemo-19091114-l.jpeg","little-nemo-19091121-l.jpeg","little-nemo-19091128-l.jpeg","little-nemo-19091205-l.jpeg","little-nemo-19091212-l.jpeg","little-nemo-19091219-l.jpeg","little-nemo-19091226-l.jpeg"];
+
+    let currentIndex = 0;
+    const imgElement = document.getElementById('slide-display');
+    const leftBtn = document.getElementById('left-btn');
+    const rightBtn = document.getElementById('right-btn');
+    const currentCounter = document.getElementById('current-page');
+    const totalCounter = document.getElementById('total-pages');
+
+    if (files.length === 0) {
+        document.body.innerHTML = "<div style='padding:20px; text-align:center;'>No image files found natively by the server.</div>";
+    } else {
+        totalCounter.textContent = files.length;
+        showSlide(0);
+    }
+
+    function showSlide(index) {
+        if (index >= 0 && index < files.length) {
+            currentIndex = index;
+            imgElement.src = "./" + files[currentIndex];
+            currentCounter.textContent = currentIndex + 1;
+        }
+    }
+
+    // Left button goes BACKWARDS
+    leftBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            showSlide(currentIndex - 1);
+        } else {
+            showSlide(files.length - 1); 
+        }
+    });
+
+    // Right button advances FORWARD
+    rightBtn.addEventListener('click', () => {
+        if (currentIndex < files.length - 1) {
+            showSlide(currentIndex + 1);
+        } else {
+            showSlide(0); 
+        }
+    });
+
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowLeft") leftBtn.click();
+        if (e.key === "ArrowRight") rightBtn.click();
+    });
+</script>
+
+</body>
+</html>
+
