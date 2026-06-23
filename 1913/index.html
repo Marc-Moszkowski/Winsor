@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Viewer</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            color: #fff;
+            font-family: sans-serif;
+            width: 100%;
+            height: 100%;
+        }
+        /* Container wraps the image and allows full natural scrolling when zoomed */
+        #viewer-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 40px;
+            overflow: auto;
+        }
+        img {
+            /* Changed to standard percentages so browser zoom multiplies its scale */
+            width: auto;
+            max-width: 95%;
+            height: auto;
+            display: block;
+            margin: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        /* Buttons remain fixed to the screen edges even when scrolling zoomed images */
+        .nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 20px 15px;
+            cursor: pointer;
+            font-size: 24px;
+            transition: background 0.2s;
+            user-select: none;
+            z-index: 10;
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        #left-btn { left: 20px; }
+        #right-btn { right: 20px; }
+        
+        #page-counter {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #888;
+            font-size: 14px;
+            background: rgba(17,17,17,0.8);
+            padding: 4px 10px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<div id="viewer-container">
+    <img id="slide-display" src="" alt="Slide">
+</div>
+
+<button id="left-btn" class="nav-btn">&#10094;</button>
+<button id="right-btn" class="nav-btn">&#10095;</button>
+
+<div id="page-counter">Slide <span id="current-page">1</span> of <span id="total-pages">0</span></div>
+
+<script>
+    const files = ["little-nemo-19130112-l.jpeg","little-nemo-19130119-l.jpeg","little-nemo-19130126-l.jpeg","little-nemo-19130202-l.jpeg","little-nemo-19130209-l.jpeg","little-nemo-19130216-l.jpeg","little-nemo-19130306-l.jpeg","little-nemo-19130324-l.jpeg","little-nemo-19130330-l.jpeg","little-nemo-19130406-l.jpeg","little-nemo-19130413-l.jpeg","little-nemo-19130420-l.jpeg","little-nemo-19130427-l.jpeg","little-nemo-19130504-l.jpeg","little-nemo-19130511-l.jpeg","little-nemo-19130518-l.jpeg","little-nemo-19130525-l.jpeg","little-nemo-19130601-l.jpeg","little-nemo-19130608-l.jpeg","little-nemo-19130615-l.jpeg","little-nemo-19130622-l.jpeg","little-nemo-19130629-l.jpeg","little-nemo-19130706-l.jpeg","little-nemo-19130713-l.jpeg","little-nemo-19130720-l.jpeg","little-nemo-19130727-l.jpeg","little-nemo-19130803-l.jpeg","little-nemo-19130810-l.jpeg","little-nemo-19130817-l.jpeg","little-nemo-19130824-l.jpeg","little-nemo-19130831-l.jpeg","little-nemo-19130914-l.jpeg","little-nemo-19130921-l.jpeg","little-nemo-19130928-l.jpeg","little-nemo-19131005-l.jpeg","little-nemo-19131012-l.jpeg","little-nemo-19131019-l.jpeg","little-nemo-19131026-l.jpeg","little-nemo-19131102-l.jpeg","little-nemo-19131109-l.jpeg","little-nemo-19131123-l.jpeg","little-nemo-19131130-l.jpeg","little-nemo-19131207-l.jpeg","little-nemo-19131214-l.jpeg","little-nemo-19131221-l.jpeg"];
+
+    let currentIndex = 0;
+    const imgElement = document.getElementById('slide-display');
+    const leftBtn = document.getElementById('left-btn');
+    const rightBtn = document.getElementById('right-btn');
+    const currentCounter = document.getElementById('current-page');
+    const totalCounter = document.getElementById('total-pages');
+
+    if (files.length === 0) {
+        document.body.innerHTML = "<div style='padding:20px; text-align:center;'>No image files found natively by the server.</div>";
+    } else {
+        totalCounter.textContent = files.length;
+        showSlide(0);
+    }
+
+    function showSlide(index) {
+        if (index >= 0 && index < files.length) {
+            currentIndex = index;
+            imgElement.src = "./" + files[currentIndex];
+            currentCounter.textContent = currentIndex + 1;
+        }
+    }
+
+    // Left button goes BACKWARDS
+    leftBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            showSlide(currentIndex - 1);
+        } else {
+            showSlide(files.length - 1); 
+        }
+    });
+
+    // Right button advances FORWARD
+    rightBtn.addEventListener('click', () => {
+        if (currentIndex < files.length - 1) {
+            showSlide(currentIndex + 1);
+        } else {
+            showSlide(0); 
+        }
+    });
+
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowLeft") leftBtn.click();
+        if (e.key === "ArrowRight") rightBtn.click();
+    });
+</script>
+
+</body>
+</html>
+
